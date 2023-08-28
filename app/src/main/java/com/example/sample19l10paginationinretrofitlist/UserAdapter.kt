@@ -35,17 +35,19 @@ class UserAdapter(
                     binding = ItemLoadingBinding.inflate(layoutInflater, parent, false)
                 )
             }
-
             else -> error("Unsupported view type $viewType")
-
         }
-
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (getItem(position)) {
-            is PagingData.Item -> TODO()
-            is PagingData.Loading -> TODO()
+        when (val item = getItem(position)) {
+            is PagingData.Item -> {
+                checkNotNull(holder as UserViewHolder) { "Incorrect viewholder $item" }
+                holder.bind(item.data)
+            }
+            is PagingData.Loading -> {
+                //no op
+            }
 
         }
     }

@@ -46,7 +46,7 @@ class FirstFragment : Fragment() {
 
             val githubInterface = retrofit.create<GithubInterface>()
             currentRequest = githubInterface
-                .getUsers(30, 70)
+                .getUsers(1, 100)
                 .apply {
                     enqueue(object : Callback<List<User>> {
                         override fun onResponse(
@@ -56,7 +56,9 @@ class FirstFragment : Fragment() {
                             if (response.isSuccessful) {
                                 val users = response.body() ?: return
                                 currentUsers.addAll(users)
-                                adapter.submitList(users)
+                                val items =
+                                    users.map { PagingData.Item(it) } + PagingData.Loading
+                                adapter.submitList(items)
                             } else {
                                 handleException(HttpException(response))
                             }
@@ -70,21 +72,21 @@ class FirstFragment : Fragment() {
                     })
                 }
 
-            toolbar
-                .menu
-                .findItem(R.id.menu_search)
-                .actionView
-                .let { it as SearchView }
-                .setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String): Boolean {
-                        return false
-                    }
-
-                    override fun onQueryTextChange(query: String): Boolean {
-                        adapter.submitList(currentUsers.filter { it.login.contains(query) })
-                        return true
-                    }
-                })
+//            toolbar
+//                .menu
+//                .findItem(R.id.menu_search)
+//                .actionView
+//                .let { it as SearchView }
+//                .setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                    override fun onQueryTextSubmit(query: String): Boolean {
+//                        return false
+//                    }
+//
+//                    override fun onQueryTextChange(query: String): Boolean {
+//                        adapter.submitList(currentUsers.filter { it.login.contains(query) })
+//                        return true
+//                    }
+//                })
         }
     }
 
